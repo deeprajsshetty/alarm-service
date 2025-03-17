@@ -1,0 +1,171 @@
+### 1. Create Alarm - Successful Creation
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{
+    "name": "Server Overload",
+    "state": "Triggered"
+}
+
+### 2. Create Alarm with State Active - Successful Creation
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{
+    "name": "Database Failure",
+    "state": "Active"
+}
+
+### 3. Create Alarm with State Cleared - Successful Creation
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{
+    "name": "Database Failure",
+    "state": "Cleared"
+}
+
+### 4. Create Alarm with State ACKed - Successful Creation
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{
+    "name": "Service Downtime",
+    "state": "ACKed"
+}
+
+### 5. Bulk Creation Test - Multiple Valid Alarms
+POST http://localhost:8080/alarms/bulk
+Content-Type: application/json
+
+[
+    {
+        "name": "Network Latency",
+        "state": "Triggered"
+    },
+    {
+        "name": "Hardware Failure",
+        "state": "Cleared"
+    },
+    {
+        "name": "Security Breach",
+        "state": "Active"
+    },
+    {
+        "name": "CPU Overload",
+        "state": "Triggered"
+    },
+    {
+        "name": "Unauthorized Access",
+        "state": "ACKed"
+    }
+]
+
+### 6. Create Alarm - Invalid State (Negative Test)
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{
+    "name": "Invalid Alarm",
+    "state": "InvalidState"
+}
+
+### 7. Create Alarm - Missing Name (Negative Test)
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{
+    "state": "Triggered"
+}
+
+### 8. Retrieve All Alarms (Empty List Initially)
+GET http://localhost:8080/alarms
+Accept: application/json
+
+### 9. Retrieve Specific Alarm by ID - Successful
+GET http://localhost:8080/alarm?id=21d82002-0317-453e-b48e-09bb10e28883
+Accept: application/json
+
+### 10. Retrieve Specific Alarm by ID - Non-existent ID (Negative Test)
+GET http://localhost:8080/alarm?id=ad74c69f-4641-4532-bfce-c05cdc617e36
+Accept: application/json
+
+### 11. Update Alarm State - Successful Update to 'Active'
+PUT http://localhost:8080/alarm?id=ad74c69f-4641-4532-bfce-c05cdc617e36
+Content-Type: application/json
+
+{
+    "state": "Active"
+}
+
+### 12. Update Alarm State - Successful Update to 'ACKed'
+PUT http://localhost:8080/alarm?id=6981475b-f4f8-486a-bfd3-947c2b050b9a
+Content-Type: application/json
+
+{
+    "state": "ACKed"
+}
+
+### 13. Update Alarm State - Invalid State (Negative Test)
+PUT http://localhost:8080/alarm?id=6981475b-f4f8-486a-bfd3-947c2b050b9a
+Content-Type: application/json
+
+{
+    "state": "UnknownState"
+}
+
+### 14. Delete Alarm - Successful Deletion
+DELETE http://localhost:8080/alarm?id=ad74c69f-4641-4532-bfce-c05cdc617e36
+
+### 15. Delete Alarm - Non-existent ID (Negative Test)
+DELETE http://localhost:8080/alarm?id=62c7a23b-5948-4a1d-bb69-d5f579b4480d
+
+### 16. Notification Test - Creating Alarm in 'Triggered' State (Immediate Notification)
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{
+    "name": "Disk Space Alert",
+    "state": "Triggered"
+}
+
+### 17. Notification Test - ACK an Alarm (Reduces Notification Frequency)
+PUT http://localhost:8080/alarm?id=62c7a23b-5948-4a1d-bb69-d5f579b4480d
+Content-Type: application/json
+
+{
+    "state": "ACKed"
+}
+
+### 18. Create Alarm with Future Date - Edge Case
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{
+    "name": "Future Date Alarm",
+    "state": "Triggered",
+    "created_at": "2099-12-31T23:59:59Z"
+}
+
+### 19. Attempt to Update Deleted Alarm (Negative Test)
+PUT http://localhost:8080/alarm?id=62c7a23b-5948-4a1d-bb69-d5f579b4480d
+Content-Type: application/json
+
+{
+    "state": "Active"
+}
+
+### 20. Missing JSON Payload - Negative Test
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{}
+
+### 21. Invalid JSON Format - Negative Test
+POST http://localhost:8080/alarm
+Content-Type: application/json
+
+{
+    "name" "Invalid JSON",
+    "state11" "Triggered"
+}

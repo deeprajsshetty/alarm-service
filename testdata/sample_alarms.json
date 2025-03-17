@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Disk Space Alert",
+    "state": "Triggered"
+  },
+  {
+    "name": "Network Latency",
+    "state": "Active"
+  },
+  {
+    "name": "CPU Overload",
+    "state": "Triggered"
+  }
+]
