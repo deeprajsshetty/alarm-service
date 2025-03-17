@@ -38,8 +38,8 @@ type NotificationInterval struct {
 
 // stateNotificationIntervals manages notification intervals per alarm state.
 var stateNotificationIntervals = map[models.AlarmState]NotificationInterval{
-	models.Triggered: {Interval: 2 * time.Second},
-	models.ACKed:     {Interval: 10 * time.Second},
+	models.Triggered: {Interval: 2 * time.Hour},
+	models.ACKed:     {Interval: 24 * time.Hour},
 }
 
 // startNotificationHandler continuously processes alarm notifications.
@@ -51,7 +51,7 @@ func (s *AlarmService) startNotificationHandler() {
 
 // startScheduler continuously checks scheduled alarms and triggers them automatically.
 func (s *AlarmService) startScheduler() {
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(1 * time.Hour)
 	defer ticker.Stop()
 
 	for range ticker.C {
@@ -68,6 +68,10 @@ func (s *AlarmService) checkAndTriggerNotifications() {
 	for id, nextNotifyTime := range s.notificationSchedule {
 		if now.After(nextNotifyTime) {
 			if alarm, found := s.alarms[id]; found {
+	/*	
+				// Commented this code as it is not part of requirement.
+				// This logic about, in case alarm manually not acknowledged 
+				// also by default acknoledged in 24 Hours	
 				if alarm.State == models.Triggered {
 					createdAt, err := s.getCreatedAtTime(alarm)
 					if err == nil && now.Sub(createdAt) >= stateNotificationIntervals[models.ACKed].Interval {
@@ -75,7 +79,7 @@ func (s *AlarmService) checkAndTriggerNotifications() {
 						alarm.ACKedAt = now.Format(time.RFC3339)
 					}
 				}
-
+	*/
 				intervalData, exists := stateNotificationIntervals[alarm.State]
 				if exists {
 					s.notificationSchedule[alarm.ID] = now.Add(intervalData.Interval)
